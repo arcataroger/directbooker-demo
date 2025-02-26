@@ -35,9 +35,6 @@ const { generateMetadataFn, Page } = generatePageComponentAndMetadataFn({
   // If the GraphQL query requires some variables, you can use this function to
   // fill in the values, starting from the route parameters
   buildQueryVariables: ({ params }) => ({ someVariable: 'foobar' }),
-  // If the query contains `_seoMetaTags`, you can use this function to
-  // automatically associate them with the route's metadata.
-  pickSeoMetaTags: (data) => data.page?._seoMetaTags,
   // The actual content of the page. In addition to the classic page props, will
   // also receive a `data` prop containing the result of the GraphQL query
   contentComponent: Content,

@@ -1,7 +1,4 @@
-import { ImageBlockFragment } from '@/components/blocks/ImageBlock';
-import { ImageGalleryBlockFragment } from '@/components/blocks/ImageGalleryBlock';
-import { VideoBlockFragment } from '@/components/blocks/VideoBlock';
-import { TagFragment } from '@/lib/datocms/commonFragments';
+import { BrandFragment } from '@/lib/datocms/commonFragments';
 import { graphql } from '@/lib/datocms/graphql';
 
 /*
@@ -25,41 +22,56 @@ export type PageProps = {
 export const query = graphql(
   /* GraphQL */ `
     query RealtimeUpdatesPageQuery {
-      page {
-        _seoMetaTags {
-          ...TagFragment
-        }
-        title
+      hotel(locale: en_US) {
         _firstPublishedAt
-        structuredText {
+        id
+        name
+        slug
+        description
+        website
+        address
+        phone
+        amenities {
+          name
+          description
+        }
+        customAmenities {
+          name
+          description
+        }
+        roomTypes {
+          name
+          maxOccupancy
+          description
+          photos {
+            responsiveImage {
+              ...ResponsiveImageFragment
+            }
+          }
+        }
+        gallery {
+          responsiveImage {
+            ...ResponsiveImageFragment
+          }
+        }
+        featuredPhoto {
+          responsiveImage {
+            ...ResponsiveImageFragment
+          }
+        }
+        faq {
+          blocks
           value
-          blocks {
-            ... on RecordInterface {
-              id
-              __typename
-            }
-            ... on ImageBlockRecord {
-              ...ImageBlockFragment
-            }
-            ... on ImageGalleryBlockRecord {
-              ...ImageGalleryBlockFragment
-            }
-            ... on VideoBlockRecord {
-              ...VideoBlockFragment
-            }
-          }
           links {
-            ... on RecordInterface {
-              id
-              __typename
-            }
-            ... on PageRecord {
-              title
-            }
+            question
+            answer
           }
+        }
+        brand {
+          ...BrandFragment
         }
       }
     }
   `,
-  [TagFragment, ImageBlockFragment, ImageGalleryBlockFragment, VideoBlockFragment],
+  [BrandFragment],
 );

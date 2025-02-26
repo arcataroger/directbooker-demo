@@ -1,4 +1,5 @@
 import { graphql } from '@/lib/datocms/graphql';
+import { ResponsiveImageFragment } from '@/components/ResponsiveImage';
 
 /*
  * This file lists a series of fragments not related to any specific React
@@ -12,3 +13,24 @@ export const TagFragment = graphql(`
     content
   }
 `);
+
+export const BrandFragment = graphql(`
+    fragment BrandFragment on BrandRecord {
+        id
+        brandName
+        website
+        logo {
+            responsiveImage {
+                ...ResponsiveImageFragment
+            }
+        }
+        brandFaqs {
+            value
+            blocks
+            links {
+                question
+                answer
+            }
+        }
+    }
+`, [ResponsiveImageFragment]);
