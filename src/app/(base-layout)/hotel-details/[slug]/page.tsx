@@ -21,58 +21,58 @@ const Code = dynamic(() => import('@/components/Code'));
  */
 const query = graphql(
   /* GraphQL */ `
-        query MyQuery($slug: String) {
-            hotel(locale: en_US, filter: {slug: {eq: $slug}}) {
-                id
-                _firstPublishedAt
-                id
-                name
-                slug
-                description
-                website
-                address
-                phone
-                amenities {
-                    name
-                    description
-                }
-                customAmenities {
-                    name
-                    description
-                }
-                roomTypes {
-                    name
-                    maxOccupancy
-                    description
-                    photos {
-                        responsiveImage {
-                            ...ResponsiveImageFragment
-                        }
-                    }
-                }
-                gallery {
-                    responsiveImage {
-                        ...ResponsiveImageFragment
-                    }
-                }
-                featuredPhoto {
-                    responsiveImage {
-                        ...ResponsiveImageFragment
-                    }
-                }
-                faq {
-                    blocks
-                    value
-                    links {
-                        question
-                        answer
-                    }
-                }
-                brand {
-                    ...BrandFragment
-                }
-            }
+    query MyQuery($slug: String) {
+      hotel(locale: en_US, filter: { slug: { eq: $slug } }) {
+        id
+        _firstPublishedAt
+        id
+        name
+        slug
+        description
+        website
+        address
+        phone
+        amenities {
+          name
+          description
         }
+        customAmenities {
+          name
+          description
+        }
+        roomTypes {
+          name
+          maxOccupancy
+          description
+          photos {
+            responsiveImage {
+              ...ResponsiveImageFragment
+            }
+          }
+        }
+        gallery {
+          responsiveImage {
+            ...ResponsiveImageFragment
+          }
+        }
+        featuredPhoto {
+          responsiveImage {
+            ...ResponsiveImageFragment
+          }
+        }
+        faq {
+          blocks
+          value
+          links {
+            question
+            answer
+          }
+        }
+        brand {
+          ...BrandFragment
+        }
+      }
+    }
   `,
   [BrandFragment],
 );
@@ -85,7 +85,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
     includeDrafts: isDraftModeEnabled,
     variables: {
       slug: slug,
-    }
+    },
   });
 
   if (!hotel) {
