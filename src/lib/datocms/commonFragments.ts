@@ -14,23 +14,26 @@ export const TagFragment = graphql(`
   }
 `);
 
-export const BrandFragment = graphql(`
+export const BrandFragment = graphql(
+  `
     fragment BrandFragment on BrandRecord {
-        id
-        brandName
-        website
-        logo {
-            responsiveImage {
-                ...ResponsiveImageFragment
-            }
+      id
+      brandName
+      website
+      logo {
+        responsiveImage {
+          ...ResponsiveImageFragment
         }
-        brandFaqs {
-            value
-            blocks
-            links {
-                question
-                answer
-            }
+      }
+      brandFaqs {
+        value
+        blocks
+        links {
+          question
+          answer
         }
+      }
     }
-`, [ResponsiveImageFragment]);
+  `,
+  [ResponsiveImageFragment],
+);

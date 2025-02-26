@@ -30,7 +30,15 @@ const Content: ContentComponentType<PageProps, ResultOf<typeof query>> = ({ data
     <>
       <h1>{data.hotel.name}</h1>
 
+
       <footer>Published at {data.hotel._firstPublishedAt}</footer>
+
+
+      <pre>
+        <code>
+          {JSON.stringify(data.hotel, null, 2)}
+        </code>
+      </pre>
     </>
   );
 };
