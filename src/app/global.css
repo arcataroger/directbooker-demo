@@ -52,7 +52,7 @@
   --tw-contain-size: ;
   --tw-contain-layout: ;
   --tw-contain-paint: ;
-  --tw-contain-style: 
+  --tw-contain-style:  
 ;
 }
 
@@ -107,7 +107,7 @@
   --tw-contain-size: ;
   --tw-contain-layout: ;
   --tw-contain-paint: ;
-  --tw-contain-style: 
+  --tw-contain-style:  
 ;
 }
 
@@ -265,7 +265,7 @@ pre {
 menu,
 ol,
 ul {
-  list-style: none;
+  
   margin: 0;
   padding: 0;
 }
@@ -2435,7 +2435,7 @@ progress {
 .list-inline,
 .list-unstyled {
   padding-left: 0;
-  list-style: none;
+  
 }
 
 .list-inline-item {
@@ -5886,7 +5886,7 @@ fieldset:disabled .btn {
   font-size: var(--bs-dropdown-font-size);
   color: var(--bs-dropdown-color);
   text-align: left;
-  list-style: none;
+  
   background-color: var(--bs-dropdown-bg);
   background-clip: padding-box;
   border: var(--bs-dropdown-border-width) solid var(--bs-dropdown-border-color);
@@ -6304,7 +6304,7 @@ fieldset:disabled .btn {
   flex-wrap: wrap;
   padding-left: 0;
   margin-bottom: 0;
-  list-style: none;
+  
 }
 
 .nav-link {
@@ -6519,7 +6519,7 @@ fieldset:disabled .btn {
   flex-direction: column;
   padding-left: 0;
   margin-bottom: 0;
-  list-style: none;
+  
 }
 
 .navbar-nav .nav-link.active,
@@ -7321,7 +7321,7 @@ fieldset:disabled .btn {
   padding: var(--bs-breadcrumb-padding-y) var(--bs-breadcrumb-padding-x);
   margin-bottom: var(--bs-breadcrumb-margin-bottom);
   font-size: var(--bs-breadcrumb-font-size);
-  list-style: none;
+  
   background-color: var(--bs-breadcrumb-bg);
   border-radius: var(--bs-breadcrumb-border-radius);
 }
@@ -7364,7 +7364,7 @@ fieldset:disabled .btn {
   --bs-pagination-disabled-border-color: var(--bs-border-color);
   display: flex;
   padding-left: 0;
-  list-style: none;
+  
 }
 
 .page-link {

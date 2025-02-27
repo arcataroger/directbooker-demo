@@ -1,10 +1,11 @@
-import { BrandFragment } from '@/lib/datocms/commonFragments';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
 import dynamic from 'next/dynamic';
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
-import { Rubik, Roboto } from 'next/font/google';
+import { Roboto, Rubik } from 'next/font/google';
+import ResponsiveImage, { ResponsiveImageFragment } from '@/components/ResponsiveImage';
+import { StructuredText } from 'react-datocms';
 
 /*
  * By using next/dynamic, the components will not be included in the page's
@@ -13,6 +14,31 @@ import { Rubik, Roboto } from 'next/font/google';
  * when they're needed.
  */
 const Code = dynamic(() => import('@/components/Code'));
+
+const BrandFragment = graphql(
+  `
+    fragment BrandFragment on BrandRecord {
+      id
+      brandName
+      website
+      logo {
+        responsiveImage {
+          ...ResponsiveImageFragment
+        }
+      }
+      brandFaqs {
+        value
+        blocks
+        links {
+          id
+          question
+          answer
+        }
+      }
+    }
+  `,
+  [ResponsiveImageFragment],
+);
 
 /**
  * The GraphQL query that will be executed for this route to generate the page
@@ -29,7 +55,7 @@ const query = graphql(
         id
         name
         slug
-        description (markdown: true)
+        description(markdown: true)
         website
         address
         phone
@@ -52,12 +78,14 @@ const query = graphql(
           }
         }
         gallery {
-          responsiveImage {
+          id
+          responsiveImage(imgixParams: { ar: "4:3", fit: crop }) {
             ...ResponsiveImageFragment
           }
         }
         featuredPhoto {
-          responsiveImage {
+          id
+          responsiveImage(imgixParams: { ar: "4:3", fit: crop }) {
             ...ResponsiveImageFragment
           }
         }
@@ -65,8 +93,9 @@ const query = graphql(
           blocks
           value
           links {
+            id
             question
-            answer
+            answer (markdown: true)
           }
         }
         brand {
@@ -75,7 +104,7 @@ const query = graphql(
       }
     }
   `,
-  [BrandFragment],
+  [BrandFragment, ResponsiveImageFragment],
 );
 
 const rubik = Rubik({
@@ -145,127 +174,35 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <h1 className="header xlarge my-0 tw-scroll-mt-12">{hotel.name}</h1>
           </div>
 
-          {/* Photo Carousel Section */}
+          {/* Photos*/}
           <div className="my-4 container">
-            <div className="d-sm-none p-0 carousel slide">
-              <div className="carousel-indicators">
-                <button
-                  type="button"
-                  data-bs-target=""
-                  aria-label="Slide 1"
-                  className="active"
-                  aria-current="true"
-                ></button>
-                <button
-                  type="button"
-                  data-bs-target=""
-                  aria-label="Slide 2"
-                  aria-current="false"
-                ></button>
-                {/* Additional indicators… */}
-              </div>
-              <div className="carousel-inner">
-                <div className="position-relative active carousel-item">
-                  <div className="ratio ratio-4x3">
-                    <img
-                      alt="Property photos and rooms"
-                      loading="lazy"
-                      decoding="async"
-                      className="rounded-4"
-                      style={{
-                        position: 'absolute',
-                        height: '100%',
-                        width: '100%',
-                        inset: 0,
-                        objectFit: 'cover',
-                        color: 'transparent',
-                      }}
-                      src="https://www.directbooker.com/_next/image?url=https%3A%2F%2Flh5.googleusercontent.com%2Fp%2FAF1QipO5IZ1APcYB5U-TNxSmH7O9rtZFPtPq-wp_PiFJ=s10000&amp;w=3840&amp;q=55"
-                    />
-                  </div>
-                </div>
-                {/* Additional carousel items… */}
-              </div>
-              <a className="carousel-control-prev" role="button" tabIndex={0} href="#">
-                <span className="p-2 text-black-secondary ImageCarousel_controlButton__t3LXg ImageCarousel_previous__Fn5ij">
-                  <svg
-                    stroke="currentColor"
-                    fill="currentColor"
-                    strokeWidth="0"
-                    viewBox="0 0 24 24"
-                    height="20"
-                    width="20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
-                  </svg>
-                </span>
-                <span className="visually-hidden">Previous</span>
-              </a>
-              <a className="carousel-control-next" role="button" tabIndex={0} href="#">
-                <span className="p-2 text-black-secondary ImageCarousel_controlButton__t3LXg ImageCarousel_next__gqCZ7">
-                  <svg
-                    stroke="currentColor"
-                    fill="currentColor"
-                    strokeWidth="0"
-                    viewBox="0 0 24 24"
-                    height="20"
-                    width="20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                    <path d="M10 6l1.41 1.41L8.83 12l2.58 2.59L10 16l-4-4 4-4z"></path>
-                  </svg>
-                </span>
-                <span className="visually-hidden">Next</span>
-              </a>
-            </div>
-
             <div className="g-2 d-none d-sm-flex row">
               <div className="col-md-5 col-12">
                 <div className="ratio Photos_customRatioBigPhoto__bMcM4 ratio-1x1">
-                  <div className="ratio ratio-4x3">
-                    <img
-                      alt="bigger property image"
-                      loading="lazy"
-                      decoding="async"
-                      className="rounded-4"
-                      style={{
-                        position: 'absolute',
-                        height: '100%',
-                        width: '100%',
-                        inset: 0,
-                        objectFit: 'cover',
-                        color: 'transparent',
-                      }}
-                      src="https://www.directbooker.com/_next/image?url=https%3A%2F%2Flh5.googleusercontent.com%2Fp%2FAF1QipO5IZ1APcYB5U-TNxSmH7O9rtZFPtPq-wp_PiFJ=s10000&amp;w=3840&amp;q=35"
-                    />
-                  </div>
+                  {hotel.featuredPhoto?.responsiveImage && (
+                    <div className="ratio ratio-4x3">
+                      <ResponsiveImage
+                        data={hotel.featuredPhoto.responsiveImage}
+                        imgClassName={'rounded-4'}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-7 col-12">
-                <div className="g-2 row">
-                  <div className="col-md-4 col-6">
-                    <div className="ratio ratio-4x3">
-                      <img
-                        alt="smaller property image"
-                        loading="lazy"
-                        decoding="async"
-                        className="rounded-4"
-                        style={{
-                          position: 'absolute',
-                          height: '100%',
-                          width: '100%',
-                          inset: 0,
-                          objectFit: 'cover',
-                          color: 'transparent',
-                        }}
-                        src="https://www.directbooker.com/_next/image?url=https%3A%2F%2Flh5.googleusercontent.com%2Fp%2FAF1QipMa0JyYQaM3g6UR3-40eM_MHO6JR7iilRfamLJx=s10000&amp;w=3840&amp;q=55"
-                      />
-                    </div>
-                  </div>
-                  {/* Additional image columns as needed */}
+                <div className="grid grid-cols-3 gap-2">
+                  {hotel.gallery
+                    .filter((photo) => photo.id !== hotel.featuredPhoto?.id)
+                    .map((photo, index) =>
+                      photo.responsiveImage ? (
+                        <div className="ratio ratio-4x3" key={index}>
+                          <ResponsiveImage
+                            data={photo.responsiveImage}
+                            imgClassName={'rounded-4'}
+                          />
+                        </div>
+                      ) : null,
+                    )}
                 </div>
               </div>
             </div>
@@ -291,13 +228,15 @@ export default async function Page({ params }: { params: { slug: string } }) {
                   <path d="M12 12c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6-1.8C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"></path>
                 </svg>
                 {hotel.address}
-                {hotel.address && <a
-                  className="ms-2"
-                  target="_blank"
-                  href={`https://www.google.com/maps/search/${encodeURIComponent(`${hotel.name} ${hotel.address.toString()}`)}`}
-                >
-                  Get directions
-                </a>}
+                {hotel.address && (
+                  <a
+                    className="ms-2"
+                    target="_blank"
+                    href={`https://www.google.com/maps/search/${encodeURIComponent(`${hotel.name} ${hotel.address.toString()}`)}`}
+                  >
+                    Get directions
+                  </a>
+                )}
               </p>
               <div>
                 <div className="flex-wrap hstack gap-2">
@@ -340,9 +279,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
                       <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16zM4 5h16v11H4V5zm8 14c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"></path>
                     </svg>
                     <p className="body-text small my-0 align-self-end">
-                      {hotel.website && <a target="_blank" href={hotel.website}>
-                        {new URL(hotel.website).host}
-                      </a>}
+                      {hotel.website && (
+                        <a target="_blank" href={hotel.website}>
+                          {new URL(hotel.website).host}
+                        </a>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -421,8 +362,34 @@ export default async function Page({ params }: { params: { slug: string } }) {
             Amenities
           </h2>
           <div className="flex-wrap hstack gap-2">
-            <p className="body-text regular my-0">Amenities not specified</p>
+            <div className="body-text regular my-0">
+              <ul className={'list-disc'}>
+                {hotel.amenities.map((amenity) => (
+                  <li>
+                    {amenity.name}
+                    {!!amenity.description && ` - ${amenity.description}`}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
+
+          {hotel.customAmenities && <>
+          <h2 className="header medium my-0 pb-3 tw-scroll-mt-12" id="amenities">
+            Custom Amenities
+          </h2>
+           <div className="flex-wrap hstack gap-2">
+            <div className="body-text regular my-0">
+              <ul className={'list-disc'}>
+                {hotel.customAmenities.map((amenity) => (
+                  <li>
+                    {amenity.name}
+                    {!!amenity.description && ` - ${amenity.description}`}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div></>}
         </div>
 
         {/* Rooms & Rates Section */}
@@ -434,26 +401,52 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <h2 id="roomSelection" className="tw-header-medium tw-scroll-mt-20 tw-mb-0">
               Rooms &amp; Rates
             </h2>
+            <pre>
+              <code>{JSON.stringify(hotel.roomTypes, null, 2)}</code>
+            </pre>
             <div className="border border-grey-mid rounded-2 d-flex flex-wrap gap-4 align-items-center justify-content-center p-12px">
               <p className="tw-body-reg tw-mb-0">
                 Have questions about your booking options? Contact the hotel directly.
               </p>
-              {/* Additional booking/contact components can be placed here */}
             </div>
           </div>
         </div>
 
-        {/* Location & Nearby Section */}
+        {/* FAQ Section */}
         <div className="tw-mx-auto tw-container tw-px-3">
           <div className="py-3 my-4">
             <div className="bg-grey-mid" style={{ height: '1px' }}></div>
           </div>
+          <div className="vstack gap-3">
+            {hotel.faq && (
+              <>
+                <h2>FAQs for {hotel.name}</h2>
+                <StructuredText
+                  data={hotel.faq}
+                  renderInlineRecord={({ record }) => (
+                    <p className={'bg-grey-light p-3'}>
+                      <h3>{record.question}</h3>
+                      <span dangerouslySetInnerHTML={{ __html: record.answer! }} />{' '}
+                    </p>
+                  )}
+                />
+              </>
+            )}
+
+            {hotel.brand && (
+              <>
+                <h2>FAQs for {hotel.brand.brandName}</h2>
+                <StructuredText data={hotel.brand.brandFaqs} />
+              </>
+            )}
+            <div className="border border-grey-mid rounded-2 d-flex flex-wrap gap-4 align-items-center justify-content-center p-12px">
+              <p className="tw-body-reg tw-mb-0">
+                Have questions about your booking options? Contact the hotel directly.
+              </p>
+            </div>
+          </div>
         </div>
       </main>
-
-      <pre>
-        <code>{JSON.stringify(hotel, null, 2)}</code>
-      </pre>
     </div>
   );
 }
