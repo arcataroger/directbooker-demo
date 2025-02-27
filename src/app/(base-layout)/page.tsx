@@ -26,7 +26,16 @@ export default async function Page() {
       <ul className={'list-disc'}>
         {allHotels.map((hotel) => (
           <li>
-            <Link href={`/hotel-details/${hotel.slug}`}><strong>{hotel.name}</strong></Link> (<Link href={`https://directbooker-demo.admin.datocms.com/editor/item_types/GRbFPTlRSt6tp-ue5btGWA/items/${hotel.id}`}><span className={"text-orange-600"}>edit</span></Link>)
+            <Link href={`/hotel-details/${hotel.slug}`}>
+              <strong>{hotel.name}</strong>
+            </Link>{' '}
+            (
+            <Link
+              href={`https://directbooker-demo.admin.datocms.com/editor/item_types/GRbFPTlRSt6tp-ue5btGWA/items/${hotel.id}`}
+            >
+              <span className={'text-orange-600'}>edit</span>
+            </Link>
+            )
           </li>
         ))}
       </ul>

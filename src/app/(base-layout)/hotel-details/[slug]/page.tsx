@@ -78,6 +78,13 @@ const hotelQuery = graphql(
               ...ResponsiveImageFragment
             }
           }
+            beds {
+                ...on BedRecord {
+                    quantity
+                    bedType
+                    shortDescription
+                }
+            }
         }
         gallery {
           id
@@ -133,7 +140,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <div className={`${roboto.variable} ${rubik.variable} pb-5`} id={"page-wrapper"}>
+    <div className={`${roboto.variable} ${rubik.variable} pb-5`} id={'page-wrapper'}>
       {/* HEADER */}
       <header className="bg-midnight-mid relative z-20 py-3">
         <div className="container mx-auto px-3 flex items-center">
@@ -403,11 +410,95 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <h2 id="roomSelection" className="tw-header-medium tw-scroll-mt-20 tw-mb-0">
               Rooms &amp; Rates
             </h2>
-            {hotel.roomTypes.length > 0 && (
-              <pre>
-                <code>{JSON.stringify(hotel.roomTypes, null, 2)}</code>
-              </pre>
-            )}
+            {hotel.roomTypes.length > 0 &&
+              hotel.roomTypes.map((room) => (
+                <div className="border rounded bg-white p-3">
+                  <div className="gx-0 row">
+                    <div className="p-0 me-lg-4 col-lg-3">
+                      <div className="position-relative flex-shrink-0">
+                        <div className="ratio ratio-4x3">
+                          {room.photos?.[0]?.responsiveImage ? (
+                            <ResponsiveImage data={room.photos[0].responsiveImage} />
+                          ) : <p>No image for this room type. Please contact hotel for details.</p>}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="!tw-px-2 !tw-pt-2 !tw-pb-1 lg:!tw-py-0 col-lg-3">
+                      <p className="tw-header-medium tw-mb-1">{room.name}</p>
+                      <p className="tw-body-reg tw-mb-1 tw-text-black-tertiary">Sleeps {room.maxOccupancy}:</p>
+                      <ul className="list-disc">
+                        {room.beds.map(bed => <li className={"tw-text-black-tertiary"}>{bed.quantity} {bed.bedType}{!!bed.shortDescription && ` (${bed.shortDescription})`}</li>)}
+                      </ul>
+                      <p className="tw-body-reg tw-mb-1">{room.description}</p>
+                    </div>
+                    <div className="!tw-px-0 col">
+                      <div className="mx-4 h-100 d-none d-lg-block float-start border-1 border-start"></div>
+                      <div className="tw-flex tw-flex-col tw-h-full">
+                        <form>
+                          <div className="tw-m-2 tw-pb-4 tw-pt-4 lg:tw-pt-0 tw-mb-4 tw-border-t lg:tw-border-t-0 lg:tw-border-b tw-border-gray-mid">
+                            <label
+                              className="tw-flex tw-justify-between tw-flex-col md:tw-flex-row tw-w-full"
+                              htmlFor="rate1"
+                            >
+                              <div>
+                                <p className="tw-flex tw-items-center tw-title-reg tw-mb-0">
+                                  <span
+                                    className="tw-text-center tw-cursor-pointer"
+                                    data-state="closed"
+                                  >
+                                    Official site rate
+                                    <svg
+                                      stroke="currentColor"
+                                      fill="currentColor"
+                                      stroke-width="0"
+                                      viewBox="0 0 24 24"
+                                      className="ps-1 text-black-secondary tw-inline-block tw-relative tw-bottom-[1px]"
+                                      height="20"
+                                      width="20"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path fill="none" d="M0 0h24v24H0V0z"></path>
+                                      <path d="M11 7h2v2h-2V7zm0 4h2v6h-2v-6zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+                                    </svg>
+                                  </span>
+                                </p>
+                                <p className="tw-text-black-secondary tw-body-sm"></p>
+                              </div>
+                              <div className="tw-text-end">
+                                <p className="tw-text-midnight-mid tw-header-medium tw-mb-0">
+                                  from $-1
+                                </p>
+                                <p className="tw-text-black-secondary tw-body-xs tw-mb-0">
+                                  for 1 night, 99 adults
+                                </p>
+                                <p className="tw-text-black-secondary tw-body-xs tw-mb-0">
+                                  $-1/night. Taxes &amp; fees incl.
+                                </p>
+                              </div>
+                            </label>
+                          </div>
+                        </form>
+                        {!!hotel.website && <div className="mt-auto text-center text-md-end">
+                          <p className="tw-hidden md:tw-inline-block tw-text-black-secondary tw-pe-4 tw-body-xs">
+                            You will be taken to the hotel’s site to complete your booking
+                          </p>
+                          <a
+                            className="tw-inline-flex tw-items-center tw-justify-center tw-title-reg md:tw-title-lg tw-gap-2 tw-px-6 tw-whitespace-nowrap tw-rounded-lg tw-ring-offset-background tw-transition-colors focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-sunset-mid focus-visible:tw-ring-offset-1 disabled:tw-pointer-events-none disabled:tw-text-black-tertiary tw-bg-sunset-mid tw-text-white active:tw-bg-sunset-dark hover:tw-bg-sunset-light disabled:tw-bg-gray-light tw-h-[44px] tw-w-full md:tw-w-auto tw-text-white tw-py-2 tw-px-6 tw-text-white tw-no-underline"
+                            target="_blank"
+                            rel="noopener"
+                            href={hotel.website}
+                          >
+                            Book direct
+                          </a>
+                          <p className="tw-block md:tw-hidden tw-mt-2 tw-text-black-secondary tw-body-xs">
+                            You will be taken to the hotel’s site to complete your booking
+                          </p>
+                        </div>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
 
             {!hotel.roomTypes.length && <p>Room information not available for this hotel.</p>}
 
