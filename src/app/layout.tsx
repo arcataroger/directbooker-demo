@@ -34,11 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <header>
-          <h1>DatoCMS x DirectBooker Next.js Demo</h1>
-          {/*<DraftModeToggler draftModeEnabled={draftMode().isEnabled} />*/}
-        </header>
-        <main>{children}</main>
+      {children}
       </body>
     </html>
   );
