@@ -7,6 +7,8 @@ import ResponsiveImage, { ResponsiveImageFragment } from '@/components/Responsiv
 import { StructuredText } from 'react-datocms';
 import Link from 'next/link';
 
+export const revalidate = 1 // revalidate every second for this demo
+
 // @ts-ignore
 const FaqFragment = graphql(
   `
@@ -78,13 +80,13 @@ const hotelQuery = graphql(
               ...ResponsiveImageFragment
             }
           }
-            beds {
-                ...on BedRecord {
-                    quantity
-                    bedType
-                    shortDescription
-                }
+          beds {
+            ... on BedRecord {
+              quantity
+              bedType
+              shortDescription
             }
+          }
         }
         gallery {
           id
@@ -419,15 +421,24 @@ export default async function Page({ params }: { params: { slug: string } }) {
                         <div className="ratio ratio-4x3">
                           {room.photos?.[0]?.responsiveImage ? (
                             <ResponsiveImage data={room.photos[0].responsiveImage} />
-                          ) : <p>No image for this room type. Please contact hotel for details.</p>}
+                          ) : (
+                            <p>No image for this room type. Please contact hotel for details.</p>
+                          )}
                         </div>
                       </div>
                     </div>
                     <div className="!tw-px-2 !tw-pt-2 !tw-pb-1 lg:!tw-py-0 col-lg-3">
                       <p className="tw-header-medium tw-mb-1">{room.name}</p>
-                      <p className="tw-body-reg tw-mb-1 tw-text-black-tertiary">Sleeps {room.maxOccupancy}:</p>
+                      <p className="tw-body-reg tw-mb-1 tw-text-black-tertiary">
+                        Sleeps {room.maxOccupancy}:
+                      </p>
                       <ul className="list-disc">
-                        {room.beds.map(bed => <li className={"tw-text-black-tertiary"}>{bed.quantity} {bed.bedType}{!!bed.shortDescription && ` (${bed.shortDescription})`}</li>)}
+                        {room.beds.map((bed) => (
+                          <li className={'tw-text-black-tertiary'}>
+                            {bed.quantity} {bed.bedType}
+                            {!!bed.shortDescription && ` (${bed.shortDescription})`}
+                          </li>
+                        ))}
                       </ul>
                       <p className="tw-body-reg tw-mb-1">{room.description}</p>
                     </div>
@@ -478,22 +489,24 @@ export default async function Page({ params }: { params: { slug: string } }) {
                             </label>
                           </div>
                         </form>
-                        {!!hotel.website && <div className="mt-auto text-center text-md-end">
-                          <p className="tw-hidden md:tw-inline-block tw-text-black-secondary tw-pe-4 tw-body-xs">
-                            You will be taken to the hotel’s site to complete your booking
-                          </p>
-                          <a
-                            className="tw-inline-flex tw-items-center tw-justify-center tw-title-reg md:tw-title-lg tw-gap-2 tw-px-6 tw-whitespace-nowrap tw-rounded-lg tw-ring-offset-background tw-transition-colors focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-sunset-mid focus-visible:tw-ring-offset-1 disabled:tw-pointer-events-none disabled:tw-text-black-tertiary tw-bg-sunset-mid tw-text-white active:tw-bg-sunset-dark hover:tw-bg-sunset-light disabled:tw-bg-gray-light tw-h-[44px] tw-w-full md:tw-w-auto tw-text-white tw-py-2 tw-px-6 tw-text-white tw-no-underline"
-                            target="_blank"
-                            rel="noopener"
-                            href={hotel.website}
-                          >
-                            Book direct
-                          </a>
-                          <p className="tw-block md:tw-hidden tw-mt-2 tw-text-black-secondary tw-body-xs">
-                            You will be taken to the hotel’s site to complete your booking
-                          </p>
-                        </div>}
+                        {!!hotel.website && (
+                          <div className="mt-auto text-center text-md-end">
+                            <p className="tw-hidden md:tw-inline-block tw-text-black-secondary tw-pe-4 tw-body-xs">
+                              You will be taken to the hotel’s site to complete your booking
+                            </p>
+                            <a
+                              className="tw-inline-flex tw-items-center tw-justify-center tw-title-reg md:tw-title-lg tw-gap-2 tw-px-6 tw-whitespace-nowrap tw-rounded-lg tw-ring-offset-background tw-transition-colors focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-sunset-mid focus-visible:tw-ring-offset-1 disabled:tw-pointer-events-none disabled:tw-text-black-tertiary tw-bg-sunset-mid tw-text-white active:tw-bg-sunset-dark hover:tw-bg-sunset-light disabled:tw-bg-gray-light tw-h-[44px] tw-w-full md:tw-w-auto tw-text-white tw-py-2 tw-px-6 tw-text-white tw-no-underline"
+                              target="_blank"
+                              rel="noopener"
+                              href={hotel.website}
+                            >
+                              Book direct
+                            </a>
+                            <p className="tw-block md:tw-hidden tw-mt-2 tw-text-black-secondary tw-body-xs">
+                              You will be taken to the hotel’s site to complete your booking
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
