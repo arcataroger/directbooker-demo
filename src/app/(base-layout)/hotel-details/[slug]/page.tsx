@@ -5,38 +5,39 @@ import { notFound } from 'next/navigation';
 import { Roboto, Rubik } from 'next/font/google';
 import ResponsiveImage, { ResponsiveImageFragment } from '@/components/ResponsiveImage';
 import { StructuredText } from 'react-datocms';
+import Link from 'next/link';
 
 // @ts-ignore
 const FaqFragment = graphql(
-    `
-        fragment FaqFragment on FaqRecord @_unmask {
-            id
-            __typename
-            question
-            answer
-        }
+  `
+    fragment FaqFragment on FaqRecord @_unmask {
+      id
+      __typename
+      question
+      answer
+    }
   `,
   [ResponsiveImageFragment],
 );
 
 const BrandFragment = graphql(
-    `
-        fragment BrandFragment on BrandRecord @_unmask {
-            id
-            brandName
-            website
-            logo {
-                responsiveImage {
-                    ...ResponsiveImageFragment
-                }
-            }
-            brandFaqs {
-                value
-                links {
-                   ...FaqFragment
-                }
-            }
+  `
+    fragment BrandFragment on BrandRecord @_unmask {
+      id
+      brandName
+      website
+      logo {
+        responsiveImage {
+          ...ResponsiveImageFragment
         }
+      }
+      brandFaqs {
+        value
+        links {
+          ...FaqFragment
+        }
+      }
+    }
   `,
   [ResponsiveImageFragment, FaqFragment],
 );
@@ -132,7 +133,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <div className={`${roboto.variable} ${rubik.variable}`}>
+    <div className={`${roboto.variable} ${rubik.variable} pb-5`} id={"page-wrapper"}>
       {/* HEADER */}
       <header className="bg-midnight-mid relative z-20 py-3">
         <div className="container mx-auto px-3 flex items-center">
@@ -165,7 +166,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                     <path fill="none" d="M0 0h24v24H0z"></path>
                     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
                   </svg>
-                  Back to list
+                  <Link href={'/'}>Back to examples list</Link>
                 </p>
               </button>
             </div>
@@ -402,9 +403,14 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <h2 id="roomSelection" className="tw-header-medium tw-scroll-mt-20 tw-mb-0">
               Rooms &amp; Rates
             </h2>
-            <pre>
-              <code>{JSON.stringify(hotel.roomTypes, null, 2)}</code>
-            </pre>
+            {hotel.roomTypes.length > 0 && (
+              <pre>
+                <code>{JSON.stringify(hotel.roomTypes, null, 2)}</code>
+              </pre>
+            )}
+
+            {!hotel.roomTypes.length && <p>Room information not available for this hotel.</p>}
+
             <div className="border border-grey-mid rounded-2 d-flex flex-wrap gap-4 align-items-center justify-content-center p-12px">
               <p className="tw-body-reg tw-mb-0">
                 Have questions about your booking options? Contact the hotel directly.
@@ -425,10 +431,10 @@ export default async function Page({ params }: { params: { slug: string } }) {
                 <StructuredText
                   data={hotel.faq}
                   renderInlineRecord={({ record }) => (
-                    <p className={'bg-grey-light p-3'}>
+                    <div className={'bg-grey-light p-3'}>
                       <h3>{record.question}</h3>
                       <span dangerouslySetInnerHTML={{ __html: record.answer! }} />{' '}
-                    </p>
+                    </div>
                   )}
                 />
               </>
@@ -453,14 +459,16 @@ export default async function Page({ params }: { params: { slug: string } }) {
 }
 
 export async function generateStaticParams() {
-  const {allHotels} = await executeQuery(graphql(`
+  const { allHotels } = await executeQuery(
+    graphql(`
       query MyQuery {
-          allHotels(first: 500) {
-              slug
-          }
+        allHotels(first: 500) {
+          slug
+        }
       }
-  `));
+    `),
+  );
   return allHotels.map((hotel) => ({
     slug: hotel.slug,
-  }))
+  }));
 }
