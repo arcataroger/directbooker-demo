@@ -95,7 +95,7 @@ const query = graphql(
           links {
             id
             question
-            answer (markdown: true)
+            answer(markdown: true)
           }
         }
         brand {
@@ -374,22 +374,25 @@ export default async function Page({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          {hotel.customAmenities && <>
-          <h2 className="header medium my-0 pb-3 tw-scroll-mt-12" id="amenities">
-            Custom Amenities
-          </h2>
-           <div className="flex-wrap hstack gap-2">
-            <div className="body-text regular my-0">
-              <ul className={'list-disc'}>
-                {hotel.customAmenities.map((amenity) => (
-                  <li>
-                    {amenity.name}
-                    {!!amenity.description && ` - ${amenity.description}`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div></>}
+          {hotel.customAmenities && (
+            <>
+              <h2 className="header medium my-0 pb-3 tw-scroll-mt-12" id="amenities">
+                Custom Amenities
+              </h2>
+              <div className="flex-wrap hstack gap-2">
+                <div className="body-text regular my-0">
+                  <ul className={'list-disc'}>
+                    {hotel.customAmenities.map((amenity) => (
+                      <li>
+                        {amenity.name}
+                        {!!amenity.description && ` - ${amenity.description}`}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Rooms & Rates Section */}
