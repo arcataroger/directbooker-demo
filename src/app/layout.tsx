@@ -1,4 +1,3 @@
-import DraftModeToggler from '@/components/DraftModeToggler';
 import { TagFragment } from '@/lib/datocms/commonFragments';
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';

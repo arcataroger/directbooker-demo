@@ -1,43 +1,44 @@
 import { executeQuery } from '@/lib/datocms/executeQuery';
 import { graphql } from '@/lib/datocms/graphql';
-import dynamic from 'next/dynamic';
 import { draftMode } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { Roboto, Rubik } from 'next/font/google';
 import ResponsiveImage, { ResponsiveImageFragment } from '@/components/ResponsiveImage';
 import { StructuredText } from 'react-datocms';
 
-/*
- * By using next/dynamic, the components will not be included in the page's
- * initial JavaScript bundle. It allows you to defer loading of Client
- * Components and imported libraries, and only include them in the client bundle
- * when they're needed.
- */
-const Code = dynamic(() => import('@/components/Code'));
-
-const BrandFragment = graphql(
-  `
-    fragment BrandFragment on BrandRecord {
-      id
-      brandName
-      website
-      logo {
-        responsiveImage {
-          ...ResponsiveImageFragment
+// @ts-ignore
+const FaqFragment = graphql(
+    `
+        fragment FaqFragment on FaqRecord @_unmask {
+            id
+            __typename
+            question
+            answer
         }
-      }
-      brandFaqs {
-        value
-        blocks
-        links {
-          id
-          question
-          answer
-        }
-      }
-    }
   `,
   [ResponsiveImageFragment],
+);
+
+const BrandFragment = graphql(
+    `
+        fragment BrandFragment on BrandRecord @_unmask {
+            id
+            brandName
+            website
+            logo {
+                responsiveImage {
+                    ...ResponsiveImageFragment
+                }
+            }
+            brandFaqs {
+                value
+                links {
+                   ...FaqFragment
+                }
+            }
+        }
+  `,
+  [ResponsiveImageFragment, FaqFragment],
 );
 
 /**
@@ -46,9 +47,9 @@ const BrandFragment = graphql(
  *
  * Thanks to gql.tada, the result will be fully typed!
  */
-const query = graphql(
+const hotelQuery = graphql(
   /* GraphQL */ `
-    query MyQuery($slug: String) {
+    query hotelQuery($slug: String) {
       hotel(locale: en_US, filter: { slug: { eq: $slug } }) {
         id
         _firstPublishedAt
@@ -90,12 +91,9 @@ const query = graphql(
           }
         }
         faq {
-          blocks
           value
           links {
-            id
-            question
-            answer(markdown: true)
+            ...FaqFragment
           }
         }
         brand {
@@ -104,7 +102,7 @@ const query = graphql(
       }
     }
   `,
-  [BrandFragment, ResponsiveImageFragment],
+  [BrandFragment, ResponsiveImageFragment, FaqFragment],
 );
 
 const rubik = Rubik({
@@ -122,7 +120,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
   const { isEnabled: isDraftModeEnabled } = draftMode();
   const { slug } = params;
 
-  const { hotel } = await executeQuery(query, {
+  const { hotel } = await executeQuery(hotelQuery, {
     includeDrafts: isDraftModeEnabled,
     variables: {
       slug: slug,
@@ -452,4 +450,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
       </main>
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  const {allHotels} = await executeQuery(graphql(`
+      query MyQuery {
+          allHotels(first: 500) {
+              slug
+          }
+      }
+  `));
+  return allHotels.map((hotel) => ({
+    slug: hotel.slug,
+  }))
 }
